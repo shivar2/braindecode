@@ -24,8 +24,7 @@ def _find_dataset_in_moabb(dataset_name):
     raise ValueError("'dataset_name' not found in moabb datasets")
 
 
-def _fetch_and_unpack_moabb_data(dataset, subject_ids, path=None):
-    dataset.data_path(subject=subject_ids[0], path=path, update_path=True)
+def _fetch_and_unpack_moabb_data(dataset, subject_ids):
     data = dataset.get_data(subject_ids)
     raws, subject_ids, session_ids, run_ids = [], [], [], []
     for subj_id, subj_data in data.items():
@@ -62,7 +61,7 @@ def _annotations_from_moabb_stim_channel(raw, dataset):
     return annots
 
 
-def fetch_data_with_moabb(dataset_name, subject_ids, path):
+def fetch_data_with_moabb(dataset_name, subject_ids):
     # ToDo: update path to where moabb downloads / looks for the data
     """Fetch data using moabb.
 
@@ -80,7 +79,7 @@ def fetch_data_with_moabb(dataset_name, subject_ids, path):
     """
     dataset = _find_dataset_in_moabb(dataset_name)
     subject_id = [subject_ids] if isinstance(subject_ids, int) else subject_ids
-    return _fetch_and_unpack_moabb_data(dataset, subject_id, path)
+    return _fetch_and_unpack_moabb_data(dataset, subject_id)
 
 
 class MOABBDataset(BaseConcatDataset):
@@ -92,8 +91,8 @@ class MOABBDataset(BaseConcatDataset):
     subject_ids: list(int) | int
         (list of) int of subject(s) to be fetched
     """
-    def __init__(self, dataset_name, subject_ids, path):
-        raws, description = fetch_data_with_moabb(dataset_name, subject_ids, path)
+    def __init__(self, dataset_name, subject_ids):
+        raws, description = fetch_data_with_moabb(dataset_name, subject_ids)
         all_base_ds = [BaseDataset(raw, row)
                        for raw, (_, row) in zip(raws, description.iterrows())]
         super().__init__(all_base_ds)
