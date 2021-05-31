@@ -25,7 +25,7 @@ def _find_dataset_in_moabb(dataset_name):
 
 
 def _fetch_and_unpack_moabb_data(dataset, subject_ids, path=None):
-    dataset.data_path(subject=subject_ids[0], path=path)
+    dataset.data_path(subject=subject_ids[0], path=path, update_path=True)
     data = dataset.get_data(subject_ids)
     raws, subject_ids, session_ids, run_ids = [], [], [], []
     for subj_id, subj_data in data.items():
